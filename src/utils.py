@@ -1,11 +1,13 @@
 import json
-import requests
+import os
 from datetime import datetime
 from typing import Any, Dict
+
 import pandas as pd
-import os
-from config import ROOT_DIR
+import requests
 from dotenv import load_dotenv
+
+from config import ROOT_DIR
 
 load_dotenv()
 API_KEY = os.getenv("API_KEY")
@@ -41,7 +43,12 @@ def get_welcome_text(user_datetime: str) -> str:
 
 
 def read_finance_excel_operation(date: str, filename: str = ROOT_DIR + "/data/operations.xlsx") -> list[dict]:
-    """asdasd"""
+    """
+    Функция фильтрует файл по дате
+    :param date: фармат времени ввиде "%Y-%m-%d %H:%M:%S"
+    :param filename: имя файла
+    :return:
+    """
     format_date = datetime.strptime(date, "%Y-%m-%d %H:%M:%S")
     start_date, end_date = format_date.replace(day=1), format_date
 
@@ -57,7 +64,8 @@ def read_finance_excel_operation(date: str, filename: str = ROOT_DIR + "/data/op
 
 
 def main_cards(data: list[dict]) -> list:
-    """adasd"""
+    """Финкция, которая выводит последние 4 цифры карты, общая сумма расходов, кешбэк (1 рубль на каждые 100 рублей)"""
+
     df = pd.DataFrame(data)
     cards = []
 
@@ -73,10 +81,10 @@ def main_cards(data: list[dict]) -> list:
 
 
 def top_transactions(data: list[dict]) -> list:
-    """afasfas"""
+    """Функция выдает топ-5 транзакций по сумме платежа"""
     top_transaction = []
     df = pd.DataFrame(data)
-    top_data = df.sort_values(by="Сумма операции с округлением", ascending=False).head()
+    top_data = df.sort_values(by="Сумма операции с округлением", ascending=False).head(5)
     for data, row in top_data.iterrows():
         top_transaction.append(
             {
@@ -89,8 +97,10 @@ def top_transactions(data: list[dict]) -> list:
     return top_transaction
 
 
+
+
 def get_api_currency(currency: str) -> float:
-    """asdasdsd"""
+    """Функция отправляет запрос API и возвращает курс валют"""
     url = "https://api.apilayer.com/exchangerates_data/latest"
 
     payload = {'symbols': "RUB", "base": currency}
@@ -100,12 +110,13 @@ def get_api_currency(currency: str) -> float:
     status_code = response.status_code
     if status_code == 200:
         result = response.json()
-        return float(result["rates"][currency])
+        return float(result["rates"]["RUB"])
     else:
         return 0
 
+
 def get_api_stocks(stock: str) -> float:
-    """asdasdsd"""
+    """Функция отправляет запрос API и возвращает стоймость акций по категориям"""
     url = "https://financialmodelingprep.com/stable/historical-price-eod/light"
 
     payload = {'symbol': stock,
@@ -120,9 +131,7 @@ def get_api_stocks(stock: str) -> float:
 
 
 def currency_rates() -> list:
-    """
-    :return:
-    """
+    """ """
     user_settings = open_user_settings()
     user_currencies = user_settings["user_currencies"]
     data_rates = []
