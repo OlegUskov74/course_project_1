@@ -2,8 +2,8 @@ from src.utils import get_welcome_text, read_finance_excel_operation, main_cards
     user_stocks
 
 
-def main() -> dict:
-    date = "2021-12-27 18:25:14"
+def main(date: str) -> dict:
+    """Основная функция запуска"""
     welcome = get_welcome_text(date)
     struct_file_json = read_finance_excel_operation(date)
 
@@ -19,5 +19,5 @@ def main() -> dict:
 
 
 
-if __name__ == "__main__":
-    print(main())
+# if __name__ == "__main__":
+#     print(main("2021-12-27 18:25:14"))

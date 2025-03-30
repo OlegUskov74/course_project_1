@@ -1,7 +1,7 @@
 from typing import Any
 from unittest.mock import patch
 
-from src.views import page_main
+from src.views import main
 
 
 @patch("requests.get")
@@ -14,7 +14,7 @@ def test_page_main(user_stocks: Any, currency_rates: Any, requests_mock: Any) ->
     requests_mock.return_value.json.return_value = {}
     user_stocks.return_value = {}
     currency_rates.return_value = {}
-    data = page_main("2021-12-27 08:00:23")
+    data = main("2021-12-27 08:00:23")
     assert data == {
         "cards": [
             {"cashback": 41.0, "last_digits": "4556", "total_spent": 24452.9},

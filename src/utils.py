@@ -20,13 +20,18 @@ def open_user_settings(user_settings: str = ROOT_DIR + "/data/user_settings.json
     :param user_settings: файл json
     :return: отрытый файл в формате словарь списков
     """
-    with open(user_settings, 'r') as json_file:
-        data = json.load(json_file)
-    return data
+    try:
+        with open(user_settings, 'r') as json_file:
+            data = json.load(json_file)
+        return data
+    except:
+        raise Exception ("Файл отсутствует")
 
 
 def get_welcome_text(user_datetime: str) -> str:
-    """Функция принимает на вход строку с датой "%Y-%m-%d %H:%M:%S" и возвращает время суток"""
+    """
+    Функция возврата строки приветствия по дате форматом YYYY-MM-DD HH:MM:SS
+    """
     date_and_time = datetime.strptime(user_datetime, "%Y-%m-%d %H:%M:%S")
     hour = date_and_time.hour
 
@@ -44,10 +49,10 @@ def get_welcome_text(user_datetime: str) -> str:
 
 def read_finance_excel_operation(date: str, filename: str = ROOT_DIR + "/data/operations.xlsx") -> list[dict]:
     """
-    Функция фильтрует файл по дате
-    :param date: фармат времени ввиде "%Y-%m-%d %H:%M:%S"
-    :param filename: имя файла
-    :return:
+    Функция фильтрует файл по дате и возвращает список транзакций
+    :param date: формат времени в виде "%Y-%m-%d %H:%M:%S"
+    :param filename: имя файла xlsx
+    :return: список транзакций
     """
     format_date = datetime.strptime(date, "%Y-%m-%d %H:%M:%S")
     start_date, end_date = format_date.replace(day=1), format_date
@@ -64,7 +69,11 @@ def read_finance_excel_operation(date: str, filename: str = ROOT_DIR + "/data/op
 
 
 def main_cards(data: list[dict]) -> list:
-    """Финкция, которая выводит последние 4 цифры карты, общая сумма расходов, кешбэк (1 рубль на каждые 100 рублей)"""
+    """
+    Функция вывода информации по карте
+    :param data: список транзакций
+    :return: информация по транзакциям
+    """
 
     df = pd.DataFrame(data)
     cards = []
@@ -98,9 +107,10 @@ def top_transactions(data: list[dict]) -> list:
 
 
 
-
 def get_api_currency(currency: str) -> float:
-    """Функция отправляет запрос API и возвращает курс валют"""
+    """
+    Функция отправляет запрос API и возвращает курс валют
+    """
     url = "https://api.apilayer.com/exchangerates_data/latest"
 
     payload = {'symbols': "RUB", "base": currency}
@@ -115,8 +125,23 @@ def get_api_currency(currency: str) -> float:
         return 0
 
 
+def currency_rates() -> list:
+    """
+    Функция возвращает курс валют согласно пользовательскому запросу
+    """
+    user_settings = open_user_settings()
+    user_currencies = user_settings["user_currencies"]
+    data_rates = []
+    for currency in user_currencies:
+        rates = get_api_currency(currency)
+        data_rates.append({"currency": currency, "rate": round(rates, 2)})
+    return data_rates
+
+
 def get_api_stocks(stock: str) -> float:
-    """Функция отправляет запрос API и возвращает стоймость акций по категориям"""
+    """
+    Функция отправляет запрос API и возвращает стоймость акций по категориям
+    """
     url = "https://financialmodelingprep.com/stable/historical-price-eod/light"
 
     payload = {'symbol': stock,
@@ -130,19 +155,10 @@ def get_api_stocks(stock: str) -> float:
         return 0
 
 
-def currency_rates() -> list:
-    """ """
-    user_settings = open_user_settings()
-    user_currencies = user_settings["user_currencies"]
-    data_rates = []
-    for currency in user_currencies:
-        rates = get_api_currency(currency)
-        data_rates.append({"currency": currency, "rate": round(rates, 2)})
-    return data_rates
-
-
 def user_stocks() -> list:
-    """asdasd"""
+    """
+    Функция возвращает стоймость акций согласно пользовательскому запросу
+    """
     user_settings = open_user_settings()
     user_stock = user_settings["user_stocks"]
     data_stocks = []
@@ -150,3 +166,7 @@ def user_stocks() -> list:
         stock = get_api_stocks(stocks)
         data_stocks.append({"stock": stocks, "price": round(stock, 2)})
     return data_stocks
+
+
+# if __name__ == "__main__":
+#     print(user_stocks())
