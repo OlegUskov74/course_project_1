@@ -1,4 +1,4 @@
-import datetime
+
 import os
 import pytest
 import requests
@@ -115,7 +115,6 @@ def test_currency_rates(requests_mock: Any) -> None:
 
 
 
-# Тест падает
 @patch("requests.get")
 def test_get_api_stocks(requests_mock: Any) -> None:
     """
@@ -136,7 +135,6 @@ def test_get_api_stocks(requests_mock: Any) -> None:
     # assert data == 0
 
 
-# Тест падает
 @patch("requests.get")
 def test_user_stocks(requests_mock: Any) -> None:
     """
