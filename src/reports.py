@@ -21,6 +21,7 @@ def log(filename: Any = None) -> Any:
     """
     Декоратор, который логирует ход выполнения функции, ее результаты и возникшие ошибки
     """
+
     def my_decorator(func: Any) -> Any:
         @wraps(func)
         def wrapper(*args: Any, **kwargs: Any) -> Any:
@@ -37,7 +38,9 @@ def log(filename: Any = None) -> Any:
                 else:
                     print(str(message_in_log))
             return message_in_log
+
         return wrapper
+
     return my_decorator
 
 
@@ -56,18 +59,14 @@ def reading_financial_from_reports_excel(filename: str | None = ROOT_DIR + "/dat
             logger.error("Произошла ошибка в чтении файла")
             raise e
     else:
-        logger.error("filename не указан и равен None")       # f строку
-        raise ValueError("filename не указан и равен None")   # f строку
+        logger.error("filename не указан и равен None")  # f строку
+        raise ValueError("filename не указан и равен None")  # f строку
 
 
 @log("test.log")
 def spending_by_category(transactions: pd.DataFrame, category: str, date: Optional[str] = None) -> pd.DataFrame:
     """
     Функция затрат по категории возвращающая в формате DataFrame
-    :param transactions:
-    :param category:
-    :param date:
-    :return:
     """
     logger.info("Запуск")
     if not date:
@@ -86,35 +85,9 @@ def spending_by_category(transactions: pd.DataFrame, category: str, date: Option
     logger.info("Сформирован файл в формате DataFrame")
     return pd.DataFrame(all_buys)
 
-
-
-# @log("test.log")
-# def spending_by_category(transactions: pd.DataFrame, category: str, date: Optional[str] = None) -> pd.DataFrame:
-#     """Траты по категории
-#     Функция возвращает траты по заданной категории
-#     за последние три месяца (от переданной даты)."""
+# if __name__ == "__main__":
+#     # print(reading_financial_from_reports_excel(ROOT_DIR + "/data/operations.xlsx"))
+#     data_excel = reading_financial_from_reports_excel(ROOT_DIR + "/data/operations.xlsx")
 #
-#     logger.info("Запуск")
-#
-#     if not date:
-#         date = datetime.datetime.now()
-#     else:
-#         date = datetime.datetime.strptime(date, "%Y-%m-%d %H:%M:%S")
-#     three_month_ago = date - timedelta(days=92)
-#     transactions["Дата операции"] = pd.to_datetime(transactions["Дата операции"], dayfirst=True)
-#     filtered_data = transactions[
-#         (transactions["Дата операции"] >= three_month_ago)
-#         & (transactions["Дата операции"] <= date)
-#         & (transactions["Категория"] == category)
-#     ]
-#
-#     return filtered_data
-
-
-
-if __name__ == "__main__":
-    # print(reading_financial_from_reports_excel(ROOT_DIR + "/data/operations.xlsx"))
-    data_excel = reading_financial_from_reports_excel(ROOT_DIR + "/data/operations.xlsx")
-
-    # data_excel = pd.read_excel(ROOT_DIR + "/data/operations.xlsx")
-    print(spending_by_category(transactions=data_excel, category="Связь", date="2021.21.01 10:00:00"))
+#     # data_excel = pd.read_excel(ROOT_DIR + "/data/operations.xlsx")
+#     print(spending_by_category(transactions=data_excel, category="Связь", date="2021.21.01 10:00:00"))

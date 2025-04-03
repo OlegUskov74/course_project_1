@@ -14,10 +14,5 @@ def main(date: str) -> dict:
         "currency_rates": currency_rates(),
         "stock_prices": user_stocks(),
     }
-    
+
     return json_response
-
-
-
-# if __name__ == "__main__":
-#     print(main("2021-12-27 18:25:14"))

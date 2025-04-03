@@ -7,7 +7,6 @@ import pandas as pd
 from config import ROOT_DIR
 from src.reports import logger
 
-logger = logging.getLogger(__name__)
 file_handler = logging.FileHandler(ROOT_DIR + "/logs/services.log", "w", encoding="utf-8")
 file_formatter = logging.Formatter("%(asctime)s %(module)s %(levelname)s: %(message)s")
 file_handler.setFormatter(file_formatter)
@@ -76,6 +75,7 @@ def search_transaction_to_people() -> str:
             sent_transaction.append(data)
     logger.info("Данные по переводам считаны успешно")
     return json.dumps(sent_transaction, ensure_ascii=False)
+
 
 # if __name__ == "__main__":
 #     print(search_transaction_to_people())

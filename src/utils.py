@@ -25,7 +25,7 @@ def open_user_settings(user_settings: str = ROOT_DIR + "/data/user_settings.json
             data = json.load(json_file)
         return data
     except:
-        raise Exception ("Файл отсутствует")
+        raise Exception("Файл отсутствует")
 
 
 def get_welcome_text(user_datetime: str) -> str:
@@ -62,8 +62,7 @@ def read_finance_excel_operation(date: str, filename: str = ROOT_DIR + "/data/op
     filtered_data = [
         data
         for data in list(group_data)
-        if datetime.strptime(data["Дата операции"], "%d.%m.%Y %H:%M:%S") >= start_date
-           and datetime.strptime(data["Дата операции"], "%d.%m.%Y %H:%M:%S") <= end_date
+        if start_date <= datetime.strptime(data["Дата операции"], "%d.%m.%Y %H:%M:%S") <= end_date
     ]
     return list(filtered_data)
 
@@ -90,7 +89,9 @@ def main_cards(data: list[dict]) -> list:
 
 
 def top_transactions(data: list[dict]) -> list:
-    """Функция выдает топ-5 транзакций по сумме платежа"""
+    """
+    Функция выдает топ-5 транзакций по сумме платежа
+    """
     top_transaction = []
     df = pd.DataFrame(data)
     top_data = df.sort_values(by="Сумма операции с округлением", ascending=False).head(5)
@@ -104,7 +105,6 @@ def top_transactions(data: list[dict]) -> list:
             }
         )
     return top_transaction
-
 
 
 def get_api_currency(currency: str) -> float:
@@ -138,7 +138,7 @@ def currency_rates() -> list:
     return data_rates
 
 
-def get_api_stocks(stock: str) -> float:
+def get_api_stocks(stock: str) -> Any:
     """
     Функция отправляет запрос API и возвращает стоймость акций по категориям
     """
@@ -152,7 +152,7 @@ def get_api_stocks(stock: str) -> float:
         result = response.json()
         return result[0]['price']
     else:
-        return 0
+        return 0.0
 
 
 def user_stocks() -> list:
@@ -166,7 +166,6 @@ def user_stocks() -> list:
         stock = get_api_stocks(stocks)
         data_stocks.append({"stock": stocks, "price": round(stock, 2)})
     return data_stocks
-
 
 # if __name__ == "__main__":
 #     print(user_stocks())
